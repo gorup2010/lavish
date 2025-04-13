@@ -3,7 +3,6 @@ package com.nashrookie.lavish.configuration;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,9 +27,11 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     @Value("${application.cors.origins}")
@@ -38,11 +40,12 @@ public class WebSecurityConfig {
     @Value("${application.cors.methods}")
     private List<String> allowedMethods;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private static final String[] publicEndpoints = { "/login", "/register", "/test", "/swagger-ui.html", "/swagger-ui/**",
+            "/api-docs/**" };
 
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
+    private final UserDetailsService userDetailsService;
+
+    private final JwtAuthFilter jwtAuthFilter;
 
     // http://localhost:8080/swagger-ui/index.html#/
     @Bean
@@ -79,10 +82,9 @@ public class WebSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(customizer -> customizer.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/login", "/register", "/test", "/swagger-ui.html", "/swagger-ui/**",
-                                "/api-docs/**")
+                        .requestMatchers(publicEndpoints)
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,13 +1,20 @@
 package com.nashrookie.lavish.entity;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.nashrookie.lavish.constant.Role;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +37,11 @@ public class User {
     private String firstname;
     private String lastname;
     private String password;
+    
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Basic(optional = false)
     private Role role;
+    private Boolean isActive; 
 
     @Override
     public boolean equals(Object o) {
