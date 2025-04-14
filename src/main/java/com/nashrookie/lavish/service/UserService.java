@@ -11,6 +11,7 @@ import com.nashrookie.lavish.constant.Role;
 import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
 import com.nashrookie.lavish.dto.response.AuthResponse;
+import com.nashrookie.lavish.entity.AppUserDetails;
 import com.nashrookie.lavish.entity.User;
 import com.nashrookie.lavish.exception.UsernameAlreadyExistsException;
 import com.nashrookie.lavish.repository.UserRepository;
@@ -40,18 +41,20 @@ public class UserService {
                 .isActive(true).role(Role.USER)
                 .build());
 
-        String jwt = jwtService.generateAccessToken(newUser);
+        String jwt = jwtService.generateAccessToken(newUser.getUsername(), newUser.getRole());
 
         return AuthResponse.builder().id(newUser.getId()).username(newUser.getUsername()).accessToken(jwt).build();
     }
 
     public AuthResponse verify(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+                new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-        User user = (User) authentication.getPrincipal();
-        String jwt = jwtService.generateAccessToken(user);
+        AppUserDetails user = (AppUserDetails) authentication.getPrincipal();
 
-        return AuthResponse.builder().id(user.getId()).username(user.getUsername()).accessToken(jwt).build();
+        String jwt = jwtService.generateAccessToken(user.getUsername(), user.getRole());
+
+        return AuthResponse.builder().id(user.getId()).username(user.getUsername()).accessToken(jwt)
+                .role(user.getRole()).build();
     }
 }
