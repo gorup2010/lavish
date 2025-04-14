@@ -12,14 +12,24 @@ import com.nashrookie.lavish.constant.Role;
 
 public class AppUserDetails implements UserDetails {
 
+    private Long id;
     private String username;
     private String password;
     private Role role;
 
     public AppUserDetails(User user) {
+        this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.role = user.getRole();
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
