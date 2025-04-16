@@ -37,7 +37,7 @@ public class JwtService {
                     .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 15)) // TODO: Only for test. Last 15 seconds
                     .sign(accessAlgorithm);
         } catch (JWTCreationException exception) {
-            throw new JWTCreationException("Error while generating token", exception);
+            throw new JWTCreationException("Error while generating access token", exception);
         }
     }
 
@@ -48,7 +48,7 @@ public class JwtService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            throw new JWTVerificationException("Error while validating token", exception);
+            throw new JWTVerificationException("Error while validating access token", exception);
         }
     }
 
@@ -62,7 +62,7 @@ public class JwtService {
                     .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // TODO: Only for test. Last 2 minutes
                     .sign(refreshAlgorithm);
         } catch (JWTCreationException exception) {
-            throw new JWTCreationException("Error while generating token", exception);
+            throw new JWTCreationException("Error while generating refresh token", exception);
         }
     }
 

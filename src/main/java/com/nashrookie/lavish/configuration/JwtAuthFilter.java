@@ -4,13 +4,19 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nashrookie.lavish.constant.Role;
+import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.service.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -28,16 +34,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = this.recoverToken(request);
-        if (token != null) {
-            String username = jwtService.validateAccessToken(token);
-            Role role = jwtService.getRole(token);
-            List<SimpleGrantedAuthority> authorities = Collections
-                    .singletonList(new SimpleGrantedAuthority(role.toString()));
-            var authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            String token = this.recoverToken(request);
+            if (token != null) {
+                String username = jwtService.validateAccessToken(token);
+                Role role = jwtService.getRole(token);
+                List<SimpleGrantedAuthority> authorities = Collections
+                        .singletonList(new SimpleGrantedAuthority(role.toString()));
+                var authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request, response);
+        } catch (JWTVerificationException e) {
+            handleJwtException(response);
         }
-        filterChain.doFilter(request, response);
+    }
+
+    private void handleJwtException(HttpServletResponse response) throws IOException {
+        int code = HttpStatus.UNAUTHORIZED.value();
+        ErrorResponse apiResponse = ErrorResponse.builder().code(code).message("Invalid Access Token").build();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        response.setContentType("application/json");
+        response.setStatus(code);
+        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        response.flushBuffer();
     }
 
     private String recoverToken(HttpServletRequest request) {

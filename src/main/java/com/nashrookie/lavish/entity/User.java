@@ -40,6 +40,7 @@ public class User {
     private Role role;
     private Boolean isActive; 
 
+    // TODO: need to learn
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,9 +24,11 @@ public class ProductController {
     
     // TODO: test security
     @PostMapping()
-    public String testEndpoint(@RequestBody String entity) {
-        Integer random = (int) (Math.random() * 1000);
-        return "SUCCESS " + random;
+    public String testEndpoint(@Param("name") String name) {
+        if (name == null) {
+            throw new RuntimeException("VCL");
+        }
+        return "SUCCESS";
     }
     
 }
