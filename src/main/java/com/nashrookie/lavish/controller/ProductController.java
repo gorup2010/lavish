@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -25,10 +24,6 @@ public class ProductController {
     // TODO: test security
     @PostMapping()
     public String testEndpoint(@Param("name") String name) {
-        if (name == null) {
-            throw new RuntimeException("VCL");
-        }
         return "SUCCESS";
     }
-    
 }

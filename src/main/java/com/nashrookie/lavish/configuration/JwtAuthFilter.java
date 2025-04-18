@@ -1,21 +1,17 @@
 package com.nashrookie.lavish.configuration;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nashrookie.lavish.constant.Role;
 import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.service.JwtService;
 
@@ -38,10 +34,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String token = this.recoverToken(request);
             if (token != null) {
                 String username = jwtService.validateAccessToken(token);
-                Role role = jwtService.getRole(token);
-                List<SimpleGrantedAuthority> authorities = Collections
-                        .singletonList(new SimpleGrantedAuthority(role.toString()));
-                var authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                List<String> roles = jwtService.getStringRoleList(token);
+                
+                var authentication = new UsernamePasswordAuthenticationToken(username, null,
+                        AuthorityUtils.createAuthorityList(roles));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);

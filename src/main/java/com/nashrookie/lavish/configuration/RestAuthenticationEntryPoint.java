@@ -17,11 +17,11 @@ import java.io.IOException;
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        ErrorResponse apiResponse = ErrorResponse.builder().code(HttpStatus.FORBIDDEN.value()).message(authException.getMessage()).build();
+        ErrorResponse apiResponse = ErrorResponse.builder().code(HttpStatus.UNAUTHORIZED.value()).message(authException.getMessage()).build();
         ObjectMapper objectMapper = new ObjectMapper();
 
         response.setContentType("application/json");
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         response.flushBuffer();
     }

@@ -1,6 +1,9 @@
 package com.nashrookie.lavish.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -10,7 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.nashrookie.lavish.constant.Role;
+import com.nashrookie.lavish.entity.Role;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
 
 @Component
@@ -27,18 +30,22 @@ public class JwtService {
         this.refreshAlgorithm = Algorithm.HMAC256(refreshSecret);
     }
 
-    public String generateAccessToken(String username, Role role) {
+    public String generateAccessToken(String username, List<String> roles) {
         try {
             return JWT.create()
                     .withSubject(username)
                     .withClaim("username", username)
-                    .withClaim("role", role.toString())
-                    // .withExpiresAt(genExpirationDate(ACCESS_TOKEN_EXPIRATION))
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 15)) // TODO: Only for test. Last 15 seconds
+                    .withClaim("roles", roles)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
+                    //.withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 15)) Only for test. Last 15 seconds
                     .sign(accessAlgorithm);
         } catch (JWTCreationException exception) {
             throw new JWTCreationException("Error while generating access token", exception);
         }
+    }
+
+    public String generateAccessToken(String username, Set<Role> roles) {
+        return this.generateAccessToken(username, roles.stream().map(Role::getName).toList());
     }
 
     public String validateAccessToken(String token) {
@@ -52,14 +59,14 @@ public class JwtService {
         }
     }
 
-    public String generateRefreshToken(String username, Role role) {
+    public String generateRefreshToken(String username, List<String> roles) {
         try {
             return JWT.create()
                     .withSubject(username)
                     .withClaim("username", username)
-                    .withClaim("role", role.toString())
-                    //.withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // TODO: Only for test. Last 2 minutes
+                    .withClaim("roles", roles)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                    //.withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) Only for test. Last 2 minutes
                     .sign(refreshAlgorithm);
         } catch (JWTCreationException exception) {
             throw new JWTCreationException("Error while generating refresh token", exception);
@@ -77,8 +84,8 @@ public class JwtService {
         }
     }
 
-    public Role getRole(String token) {
+    public List<String> getStringRoleList(String token) {
         DecodedJWT decodedJWT = JWT.decode(token);
-        return decodedJWT.getClaim("role").as(Role.class);
+        return decodedJWT.getClaim("roles").asList(String.class);
     }
 }
