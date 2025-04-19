@@ -43,6 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JWTVerificationException e) {
             handleJwtException(response);
+        }
     }
 
     private void handleJwtException(HttpServletResponse response) throws IOException {

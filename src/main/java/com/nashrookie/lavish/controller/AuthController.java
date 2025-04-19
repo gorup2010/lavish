@@ -35,10 +35,6 @@ public class AuthController {
     private static final String PATH_ONLY = "/refresh";
     private static final Integer REFRESH_TOKEN_MAXAGE = 60 * 60 * 24; // Seconds. Must sync with JwtService
 
-    private final UserService userService;
-    private final JwtService jwtService;
-    private static final String COOKIE_NAME = "refresh";
-
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthResponse auth = userService.verify(request);
