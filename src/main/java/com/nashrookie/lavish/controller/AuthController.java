@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
 import com.nashrookie.lavish.dto.response.AuthResponse;
+import com.nashrookie.lavish.entity.User;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
 import com.nashrookie.lavish.service.JwtService;
 import com.nashrookie.lavish.service.UserService;
