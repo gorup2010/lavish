@@ -24,12 +24,15 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(RefreshTokenInvalidException.class)
-    public ResponseEntity<ErrorResponse> handleRefreshTokenInvalidE(RefreshTokenInvalidException ex,
+    public ResponseEntity<ErrorResponse> handleRefreshTokenInvalidException(RefreshTokenInvalidException ex,
             WebRequest request) {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex, request);
     }
 
-
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
+    //     return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
+    // }
     
     private String getServletPath(WebRequest webRequest) {
         ServletWebRequest servletRequest = (ServletWebRequest) webRequest;

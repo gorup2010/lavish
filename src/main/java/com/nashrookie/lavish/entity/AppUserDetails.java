@@ -1,13 +1,13 @@
 package com.nashrookie.lavish.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.nashrookie.lavish.constant.Role;
 
 
 public class AppUserDetails implements UserDetails {
@@ -15,13 +15,21 @@ public class AppUserDetails implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private Role role;
+    private Set<Role> roles;
 
     public AppUserDetails(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.role = user.getRole();
+        this.roles = user.getRoles();
+    }
+
+    public Set<Role> getRole() {
+        return roles;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Role getRole() {
@@ -34,7 +42,9 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role.toString()));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        roles.forEach(r -> authorities.add(new SimpleGrantedAuthority(r.toString())));
+        return authorities;
     }
 
     @Override

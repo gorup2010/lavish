@@ -1,7 +1,7 @@
 package com.nashrookie.lavish.dto.request;
 
 public record RegisterRequest(
-    String username,
+    String email,
     String password,
     String firstname,
     String lastname
