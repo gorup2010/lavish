@@ -2,8 +2,6 @@ package com.nashrookie.lavish.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +15,8 @@ public class ProductController {
     
     @GetMapping()
     //@Secured("USER")
-    public String getProducts(Principal principal) {
-        return principal.getName();
+    public String getProducts() {
+        return "SUCCESS";
     }
     
     // TODO: test security

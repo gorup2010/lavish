@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
 import com.nashrookie.lavish.dto.response.AuthResponse;
-import com.nashrookie.lavish.entity.User;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
 import com.nashrookie.lavish.service.JwtService;
 import com.nashrookie.lavish.service.UserService;
@@ -34,10 +33,6 @@ public class AuthController {
     private static final String COOKIE_NAME = "refresh";
     private static final String PATH_ONLY = "/refresh";
     private static final Integer REFRESH_TOKEN_MAXAGE = 60 * 60 * 24; // Seconds. Must sync with JwtService
-
-    private final UserService userService;
-    private final JwtService jwtService;
-    private static final String COOKIE_NAME = "refresh";
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {

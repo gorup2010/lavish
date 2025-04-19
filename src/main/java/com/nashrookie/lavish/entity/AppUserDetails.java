@@ -24,16 +24,8 @@ public class AppUserDetails implements UserDetails {
         this.roles = user.getRoles();
     }
 
-    public Set<Role> getRole() {
+    public Set<Role> getRoles() {
         return roles;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Role getRole() {
-        return role;
     }
 
     public Long getId() {
