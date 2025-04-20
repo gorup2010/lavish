@@ -29,10 +29,10 @@ public class ApiExceptionHandler {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex, request);
     }
 
-    // @ExceptionHandler(Exception.class)
-    // public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
-    //     return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
-    // }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
+    }
     
     private String getServletPath(WebRequest webRequest) {
         ServletWebRequest servletRequest = (ServletWebRequest) webRequest;
