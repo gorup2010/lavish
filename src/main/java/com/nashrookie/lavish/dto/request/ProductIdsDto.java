@@ -1,4 +1,6 @@
 package com.nashrookie.lavish.dto.request;
 
-public record ProductIdsDto(Long[] ids) {
+import java.util.List;
+
+public record ProductIdsDto(List<Long> ids) {
 }
