@@ -6,13 +6,16 @@ import com.nashrookie.lavish.dto.request.CreateProductDto;
 import com.nashrookie.lavish.dto.request.ProductFilterDto;
 import com.nashrookie.lavish.dto.request.ProductIdsDto;
 import com.nashrookie.lavish.dto.request.UpdateProductDto;
+import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.dto.response.ProductCardDto;
 import com.nashrookie.lavish.dto.response.ProductInformationDto;
+import com.nashrookie.lavish.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,38 +27,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
 public class ProductController {
-    
 
+    private final ProductService productService;
 
     @GetMapping()
-    public ResponseEntity<List<ProductCardDto>> getProducts(@ModelAttribute ProductFilterDto productFilter) {
-        // Get all products
-
-        return ResponseEntity.ok(null);
+    public ResponseEntity<PaginationResponse<ProductCardDto>> getProducts(
+            @ModelAttribute ProductFilterDto productFilter) {
+        Sort sort = productFilter.orderBy().equalsIgnoreCase("desc")
+                ? Sort.by(productFilter.sortBy()).descending()
+                : Sort.by(productFilter.sortBy()).ascending();
+        Pageable pageable = PageRequest.of(productFilter.page() - 1, productFilter.size(), sort);
+        PaginationResponse<ProductCardDto> result = productService.getAllProducts(productFilter, pageable);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductInformationDto> getProductDetailInformation(@PathVariable Long id) {
-        
+
         return ResponseEntity.ok(null);
     }
 
     @PostMapping
     @Secured("ADMIN")
     public ResponseEntity<ProductInformationDto> createProduct(@RequestBody CreateProductDto productCreation) {
-        
+
         return ResponseEntity.ok(null);
     }
 
     @PatchMapping("/{id}")
     @Secured("ADMIN")
-    public ResponseEntity<ProductInformationDto> updateProduct(@PathVariable String id, @RequestBody UpdateProductDto productUpdate) {
-        
+    public ResponseEntity<ProductInformationDto> updateProduct(@PathVariable String id,
+            @RequestBody UpdateProductDto productUpdate) {
+
         return ResponseEntity.ok(null);
     }
 
