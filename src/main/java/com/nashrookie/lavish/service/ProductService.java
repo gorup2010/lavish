@@ -39,7 +39,7 @@ public class ProductService {
                 pageable);
                 
         PaginationResponse<ProductCardDto> paginationResponse = new PaginationResponse<>();
-        paginationResponse.setPage(pageable.getPageNumber() + 1);
+        paginationResponse.setPage(pageable.getPageNumber());
         paginationResponse.setTotal((int) products.getTotalElements());
         paginationResponse.setTotalPages(products.getTotalPages());
         paginationResponse.setData(products.getContent().stream().map(ProductCardDto::fromModel).toList());
