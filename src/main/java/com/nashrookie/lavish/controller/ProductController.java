@@ -42,7 +42,7 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<PaginationResponse<ProductCardDto>> getProducts(
             @Valid @ModelAttribute ProductFilterDto productFilter) {
-        Sort sort = productFilter.orderBy().equalsIgnoreCase("desc")
+        Sort sort = productFilter.sortOrder().equalsIgnoreCase("desc")
                 ? Sort.by(productFilter.sortBy()).descending()
                 : Sort.by(productFilter.sortBy()).ascending();
         // Remember page starts from 0 in JPA

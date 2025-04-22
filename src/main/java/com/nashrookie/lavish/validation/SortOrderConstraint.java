@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = OrderByValidator.class)
+@Constraint(validatedBy = SortOrderValidator.class)
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OrderByConstraint {
-    String message() default "Invalid orderBy field";
+public @interface SortOrderConstraint {
+    String message() default "Invalid sortOrder field";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
