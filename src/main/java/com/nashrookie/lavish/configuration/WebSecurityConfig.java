@@ -43,9 +43,9 @@ public class WebSecurityConfig {
     @Value("${application.cors.methods}")
     private List<String> allowedMethods;
 
-    private static final String[] publicEndpoints = { "/login", "/register", "/refresh", "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/api-docs/**", "/test" };
+    private static final String[] publicEndpoints = { "/login", "/register", "/refresh", "/test",
+            "api/v1/products/**", "api/v1/categories/**",
+            "/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/test" };
 
     private final UserDetailsService userDetailsService;
 
