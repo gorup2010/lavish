@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nashrookie.lavish.dto.response.ErrorResponse;
+import com.nashrookie.lavish.entity.AppUserDetails;
 import com.nashrookie.lavish.service.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -35,8 +36,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (token != null) {
                 String username = jwtService.validateAccessToken(token);
                 List<String> roles = jwtService.getStringRoleList(token);
-                
-                var authentication = new UsernamePasswordAuthenticationToken(username, null,
+                Long id = jwtService.getId(token);
+
+                AppUserDetails user = AppUserDetails.builder().id(id).username(username).build();
+                var authentication = new UsernamePasswordAuthenticationToken(user, null,
                         AuthorityUtils.createAuthorityList(roles));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

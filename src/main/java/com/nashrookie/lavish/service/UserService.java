@@ -46,7 +46,7 @@ public class UserService {
                 .build());
         newUser.addRole(userRole);
 
-        String jwt = jwtService.generateAccessToken(newUser.getUsername(), newUser.getRoles());
+        String jwt = jwtService.generateAccessToken(newUser.getId(), newUser.getUsername(), newUser.getRoles());
         List<String> stringRoles = newUser.getRoles().stream().map(Role::getName).toList();
 
         return AuthResponse.builder().id(newUser.getId()).username(newUser.getUsername()).roles(stringRoles).accessToken(jwt).build();
@@ -58,7 +58,7 @@ public class UserService {
 
         AppUserDetails user = (AppUserDetails) authentication.getPrincipal();
 
-        String jwt = jwtService.generateAccessToken(user.getUsername(), user.getRoles());
+        String jwt = jwtService.generateAccessToken(user.getId(),user.getUsername(), user.getRoles());
         List<String> stringRoles = user.getRoles().stream().map(Role::getName).toList();
 
         return AuthResponse.builder().id(user.getId()).username(user.getUsername()).accessToken(jwt)

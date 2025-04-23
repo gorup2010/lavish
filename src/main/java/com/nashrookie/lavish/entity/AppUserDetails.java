@@ -9,20 +9,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.Builder;
 
+@Builder
 public class AppUserDetails implements UserDetails {
 
     private Long id;
     private String username;
     private String password;
     private Set<Role> roles;
-
-    public AppUserDetails(User user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.password = user.getPassword();
-        this.roles = user.getRoles();
-    }
 
     public Set<Role> getRoles() {
         return roles;

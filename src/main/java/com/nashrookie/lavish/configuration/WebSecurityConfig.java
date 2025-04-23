@@ -44,7 +44,7 @@ public class WebSecurityConfig {
     private List<String> allowedMethods;
 
     private static final String[] publicEndpoints = { "/login", "/register", "/refresh", "/test",
-            "api/v1/products/**", "api/v1/categories/**",
+            "api/v1/products/**", "api/v1/categories/**", "api/v1/ratings/**",
             "/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/test" };
 
     private final UserDetailsService userDetailsService;
