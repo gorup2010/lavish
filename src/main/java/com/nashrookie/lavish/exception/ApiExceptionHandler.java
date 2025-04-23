@@ -48,6 +48,12 @@ public class ApiExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex, request);
     }
 
+    @ExceptionHandler(NotFoundProductException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundProductException(NotFoundProductException ex,
+            WebRequest request) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex, request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
@@ -63,13 +69,12 @@ public class ApiExceptionHandler {
         String errorMessage = null;
         if (ex instanceof MethodArgumentNotValidException validEx) {
             errorMessage = extractFieldErrors(validEx);
-        }
-        else {
+        } else {
             errorMessage = ex.getMessage();
         }
 
         log.error(ERROR_LOG_FORMAT, this.getServletPath(request), status.value(), errorMessage);
-        //ex.printStackTrace();
+        // ex.printStackTrace();
 
         ErrorResponse errorResponse = new ErrorResponse(status.value(), errorMessage);
         return ResponseEntity.status(status).body(errorResponse);
@@ -78,9 +83,9 @@ public class ApiExceptionHandler {
     private String extractFieldErrors(MethodArgumentNotValidException ex) {
         Map<String, List<String>> errors = new HashMap<>();
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        fieldErrors.forEach(error -> {
-            errors.computeIfAbsent(error.getField(), k -> new java.util.ArrayList<>()).add(error.getDefaultMessage());
-        });
+        fieldErrors.forEach(error -> 
+            errors.computeIfAbsent(error.getField(), k -> new java.util.ArrayList<>()).add(error.getDefaultMessage())
+        );
         return errors.toString();
     }
 }

@@ -10,6 +10,9 @@ import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.dto.response.ProductCardDto;
 import com.nashrookie.lavish.dto.response.ProductInformationDto;
+import com.nashrookie.lavish.entity.Product;
+import com.nashrookie.lavish.exception.NotFoundProductException;
+import com.nashrookie.lavish.repository.ProductRepository;
 import com.nashrookie.lavish.service.ProductService;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @GetMapping()
     public ResponseEntity<PaginationResponse<ProductCardDto>> getProducts(
@@ -51,11 +55,16 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
+
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
+    @ApiResponse(responseCode = "404", description = "Can not found product", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/{id}")
     public ResponseEntity<ProductInformationDto> getProductDetailInformation(@PathVariable Long id) {
-
-        return ResponseEntity.ok(null);
+        Product res = productRepository.findWithImagesAndCategoriesById(id).orElseThrow(NotFoundProductException::new);
+        return ResponseEntity.ok(ProductInformationDto.fromModel(res));
     }
+
 
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
     @ApiResponse(responseCode = "403", description = "Authorization failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
@@ -67,6 +76,7 @@ public class ProductController {
         return ResponseEntity.ok(null);
     }
 
+
     @PatchMapping("/{id}")
     @Secured("ADMIN")
     public ResponseEntity<ProductInformationDto> updateProduct(@PathVariable String id,
@@ -74,6 +84,7 @@ public class ProductController {
 
         return ResponseEntity.ok(null);
     }
+
 
     @DeleteMapping
     @Secured("ADMIN")
