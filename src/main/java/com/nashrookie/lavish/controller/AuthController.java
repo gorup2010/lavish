@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
 import com.nashrookie.lavish.dto.response.AuthResponse;
@@ -37,7 +36,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthResponse auth = userService.verify(request);
-        String refreshToken = jwtService.generateRefreshToken(auth.username(), auth.roles());
+        String refreshToken = jwtService.generateRefreshToken(auth.id(),auth.username(), auth.roles());
         ResponseCookie cookie = ResponseCookie.from(COOKIE_NAME, refreshToken).path(PATH_ONLY).httpOnly(true)
                 .maxAge(REFRESH_TOKEN_MAXAGE).build();
 
@@ -49,7 +48,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         AuthResponse auth = userService.register(request);
-        String refreshToken = jwtService.generateRefreshToken(auth.username(), auth.roles());
+        String refreshToken = jwtService.generateRefreshToken(auth.id(), auth.username(), auth.roles());
         ResponseCookie cookie = ResponseCookie.from(COOKIE_NAME, refreshToken).path(PATH_ONLY).httpOnly(true)
                 .maxAge(REFRESH_TOKEN_MAXAGE).build();
 
@@ -63,9 +62,11 @@ public class AuthController {
         if (refresh == null) {
             throw new RefreshTokenInvalidException();
         }
-        List<String> roles = jwtService.getStringRoleList(refresh);
         String username = jwtService.validateRefreshToken(refresh);
-        String token = jwtService.generateAccessToken(username, roles);
+        List<String> roles = jwtService.getStringRoleList(refresh);
+        Long id = jwtService.getId(refresh);
+
+        String token = jwtService.generateAccessToken(id, username, roles);
         AuthResponse response = AuthResponse.builder().username(username).roles(roles).accessToken(token).build();
 
         return ResponseEntity.ok().body(response);

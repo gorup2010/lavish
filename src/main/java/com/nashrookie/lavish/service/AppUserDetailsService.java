@@ -1,7 +1,5 @@
 package com.nashrookie.lavish.service;
 
-import java.util.Optional;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,11 +21,11 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findWithRolesByUsername(username);
-        if (!user.isPresent()) {
+        User user = userRepository.findWithRolesByUsername(username).orElseThrow(() -> {
             log.info("Not found user {}", username);
-            throw new UsernameNotFoundException("User not found");
-        }
-        return new AppUserDetails(user.get());
+            return new UsernameNotFoundException("User not found");
+        });
+        return AppUserDetails.builder().id(user.getId()).username(user.getUsername()).password(user.getPassword())
+                .roles(user.getRoles()).build();
     }
 }
