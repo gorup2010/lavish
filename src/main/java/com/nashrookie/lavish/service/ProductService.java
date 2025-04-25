@@ -39,13 +39,12 @@ public class ProductService {
                         .and(ProductSpecification.hasCategory(categories))
                         .and(ProductSpecification.hasPrice(productFilter.minPrice(), productFilter.maxPrice())),
                 pageable);
-                
-        PaginationResponse<ProductCardDto> paginationResponse = new PaginationResponse<>();
-        paginationResponse.setPage(pageable.getPageNumber());
-        paginationResponse.setTotal((int) products.getTotalElements());
-        paginationResponse.setTotalPages(products.getTotalPages());
-        paginationResponse.setData(products.getContent().stream().map(ProductCardDto::fromModel).toList());
 
-        return paginationResponse;
+        return PaginationResponse.<ProductCardDto>builder()
+                        .page(pageable.getPageNumber())
+                        .total(products.getTotalElements())
+                        .totalPages(products.getTotalPages())
+                        .data(products.getContent().stream().map(ProductCardDto::fromModel).toList())
+                        .build();
     }
 }

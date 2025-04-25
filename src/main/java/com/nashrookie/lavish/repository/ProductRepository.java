@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.nashrookie.lavish.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
-    @EntityGraph(attributePaths = {"images", "categories"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = { "images", "categories" }, type = EntityGraph.EntityGraphType.FETCH)
     Optional<Product> findWithImagesAndCategoriesById(Long id);
 }

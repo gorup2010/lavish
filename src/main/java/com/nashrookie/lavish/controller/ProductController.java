@@ -51,6 +51,7 @@ public class ProductController {
                 : Sort.by(productFilter.sortBy()).ascending();
         // Remember page starts from 0 in JPA
         Pageable pageable = PageRequest.of(productFilter.page(), productFilter.size(), sort);
+        
         PaginationResponse<ProductCardDto> result = productService.getAllProducts(productFilter, pageable);
         return ResponseEntity.ok(result);
     }
@@ -63,6 +64,16 @@ public class ProductController {
     public ResponseEntity<ProductInformationDto> getProductDetailInformation(@PathVariable Long id) {
         Product res = productRepository.findWithImagesAndCategoriesById(id).orElseThrow(NotFoundProductException::new);
         return ResponseEntity.ok(ProductInformationDto.fromModel(res));
+    }
+
+
+    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
+    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @GetMapping("/admin")
+    //@Secured("ADMIN")
+    public ResponseEntity<?> getProductsForAdminPage(@Valid @ModelAttribute ProductFilterDto productFilter) {
+        
+        return ResponseEntity.ok(null);
     }
 
 

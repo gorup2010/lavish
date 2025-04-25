@@ -45,7 +45,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,
             WebRequest request) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex, request);
+        ValidationException validationException = new ValidationException(ex);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, validationException, request);
     }
 
     @ExceptionHandler(NotFoundProductException.class)
@@ -66,26 +67,12 @@ public class ApiExceptionHandler {
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, Exception ex,
             WebRequest request) {
-        String errorMessage = null;
-        if (ex instanceof MethodArgumentNotValidException validEx) {
-            errorMessage = extractFieldErrors(validEx);
-        } else {
-            errorMessage = ex.getMessage();
-        }
+        String errorMessage = ex.getMessage();
 
         log.error(ERROR_LOG_FORMAT, this.getServletPath(request), status.value(), errorMessage);
-        // ex.printStackTrace();
+        ex.printStackTrace();
 
         ErrorResponse errorResponse = new ErrorResponse(status.value(), errorMessage);
         return ResponseEntity.status(status).body(errorResponse);
-    }
-
-    private String extractFieldErrors(MethodArgumentNotValidException ex) {
-        Map<String, List<String>> errors = new HashMap<>();
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        fieldErrors.forEach(error -> 
-            errors.computeIfAbsent(error.getField(), k -> new java.util.ArrayList<>()).add(error.getDefaultMessage())
-        );
-        return errors.toString();
     }
 }

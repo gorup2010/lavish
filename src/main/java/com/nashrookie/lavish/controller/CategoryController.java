@@ -21,7 +21,7 @@ public class CategoryController {
 
     @GetMapping()
     public ResponseEntity<List<CategoryDto>> getCategories() {
-        return ResponseEntity.ok(categoryRepository.findBy(CategoryDto.class));
+        return ResponseEntity.ok(categoryRepository.findAllBy(CategoryDto.class));
     }
 
 }

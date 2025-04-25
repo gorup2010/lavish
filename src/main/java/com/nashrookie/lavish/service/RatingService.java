@@ -1,6 +1,5 @@
 package com.nashrookie.lavish.service;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,29 +20,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RatingService {
-    
+
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
     public PaginationResponse<RatingDto> getRatings(Long productId, Pageable pageable) {
         Page<RatingDto> products = ratingRepository.findAllByProductId(productId, RatingDto.class, pageable);
-                
-        PaginationResponse<RatingDto> paginationResponse = new PaginationResponse<>();
-        paginationResponse.setPage(pageable.getPageNumber());
-        paginationResponse.setTotal((int) products.getTotalElements());
-        paginationResponse.setTotalPages(products.getTotalPages());
-        paginationResponse.setData(products.getContent());
 
-        return paginationResponse;
+        return PaginationResponse.<RatingDto>builder()
+                    .page(pageable.getPageNumber())
+                    .total(products.getTotalElements())
+                    .totalPages(products.getTotalPages())
+                    .data(products.getContent()).build();
     }
 
     @Transactional
     public Rating createRating(CreateRatingDto rating, AppUserDetails user) {
         Rating newRating = Rating.builder()
-            .comment(rating.comment())
-            .star(rating.star())
-            .build();
+                .comment(rating.comment())
+                .star(rating.star())
+                .build();
         newRating.setUser(userRepository.getReferenceById(user.getId()));
         newRating.setProduct(productRepository.getReferenceById(rating.productId()));
         return ratingRepository.save(newRating);

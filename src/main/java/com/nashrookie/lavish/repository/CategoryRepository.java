@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.nashrookie.lavish.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    <T> List<T> findBy(Class<T> type);
+    <T> List<T> findAllBy(Class<T> type);
 }
