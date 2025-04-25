@@ -9,6 +9,7 @@ import com.nashrookie.lavish.dto.request.UpdateProductDto;
 import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.dto.response.ProductCardDto;
+import com.nashrookie.lavish.dto.response.ProductCardInAdminDto;
 import com.nashrookie.lavish.dto.response.ProductInformationDto;
 import com.nashrookie.lavish.entity.Product;
 import com.nashrookie.lavish.exception.NotFoundProductException;
@@ -44,18 +45,17 @@ public class ProductController {
     private final ProductRepository productRepository;
 
     @GetMapping()
-    public ResponseEntity<PaginationResponse<ProductCardDto>> getProducts(
+    public ResponseEntity<PaginationResponse<ProductCardDto>> getProductsUserView(
             @Valid @ModelAttribute ProductFilterDto productFilter) {
         Sort sort = productFilter.sortOrder().equalsIgnoreCase("desc")
                 ? Sort.by(productFilter.sortBy()).descending()
                 : Sort.by(productFilter.sortBy()).ascending();
         // Remember page starts from 0 in JPA
         Pageable pageable = PageRequest.of(productFilter.page(), productFilter.size(), sort);
-        
-        PaginationResponse<ProductCardDto> result = productService.getAllProducts(productFilter, pageable);
+
+        PaginationResponse<ProductCardDto> result = productService.getProductsUserView(productFilter, pageable);
         return ResponseEntity.ok(result);
     }
-
 
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
     @ApiResponse(responseCode = "404", description = "Can not found product", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
@@ -66,16 +66,20 @@ public class ProductController {
         return ResponseEntity.ok(ProductInformationDto.fromModel(res));
     }
 
-
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/admin")
-    //@Secured("ADMIN")
-    public ResponseEntity<?> getProductsForAdminPage(@Valid @ModelAttribute ProductFilterDto productFilter) {
-        
-        return ResponseEntity.ok(null);
-    }
+    // @Secured("ADMIN")
+    public ResponseEntity<PaginationResponse<ProductCardInAdminDto>> getProductsAdminView(
+            @Valid @ModelAttribute ProductFilterDto productFilter) {
+        Sort sort = productFilter.sortOrder().equalsIgnoreCase("desc")
+                ? Sort.by(productFilter.sortBy()).descending()
+                : Sort.by(productFilter.sortBy()).ascending();
+        Pageable pageable = PageRequest.of(productFilter.page(), productFilter.size(), sort);
 
+        PaginationResponse<ProductCardInAdminDto> result = productService.getProductsAdminView(productFilter, pageable);
+        return ResponseEntity.ok(result);
+    }
 
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
     @ApiResponse(responseCode = "403", description = "Authorization failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
@@ -87,7 +91,6 @@ public class ProductController {
         return ResponseEntity.ok(null);
     }
 
-
     @PatchMapping("/{id}")
     @Secured("ADMIN")
     public ResponseEntity<ProductInformationDto> updateProduct(@PathVariable String id,
@@ -95,7 +98,6 @@ public class ProductController {
 
         return ResponseEntity.ok(null);
     }
-
 
     @DeleteMapping
     @Secured("ADMIN")

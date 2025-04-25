@@ -15,7 +15,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nashrookie.lavish.entity.Role;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class JwtService {
     private static final String ID = "id";
     private static final String USERNAME = "username";
@@ -86,6 +89,7 @@ public class JwtService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
+            log.error("Error while validating refresh token {}", token);
             throw new RefreshTokenInvalidException();
         }
     }

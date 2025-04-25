@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class SortByValidator implements 
   ConstraintValidator<SortByConstraint, String> {
 
-    private static List<String> validSortBy = List.of("createdOn", "price");
+    private static List<String> validSortBy = List.of("createdOn", "price", "quantity");
 
     @Override
     public void initialize(SortByConstraint constraint) {

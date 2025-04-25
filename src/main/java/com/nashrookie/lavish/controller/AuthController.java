@@ -60,6 +60,7 @@ public class AuthController {
     @GetMapping("/refresh")
     public ResponseEntity<AuthResponse> refreshToken(@CookieValue(required = false) String refresh) {
         if (refresh == null) {
+            log.warn("Refresh token is null");
             throw new RefreshTokenInvalidException();
         }
         String username = jwtService.validateRefreshToken(refresh);

@@ -70,7 +70,7 @@ public class ApiExceptionHandler {
         String errorMessage = ex.getMessage();
 
         log.error(ERROR_LOG_FORMAT, this.getServletPath(request), status.value(), errorMessage);
-        ex.printStackTrace();
+        //ex.printStackTrace();
 
         ErrorResponse errorResponse = new ErrorResponse(status.value(), errorMessage);
         return ResponseEntity.status(status).body(errorResponse);
