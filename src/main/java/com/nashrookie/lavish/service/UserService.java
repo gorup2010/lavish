@@ -34,7 +34,7 @@ public class UserService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) throws UsernameAlreadyExistsException {
-        if (userRepository.findByUsername(request.email()).isPresent()) {
+        if (userRepository.findByIsActiveTrueAndUsername(request.email()).isPresent()) {
             throw new UsernameAlreadyExistsException();
         }
 

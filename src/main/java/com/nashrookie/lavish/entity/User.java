@@ -18,17 +18,14 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+
 
 @Entity
 @Table(name = "users")
+@Data
 @Builder
-@Getter
-@Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends AuditEntity {
@@ -43,6 +40,9 @@ public class User extends AuditEntity {
     private String lastname;
     @Column(nullable = false, length = 255)
     private String password;
+    @Column
+    @Builder.Default
+    private Boolean isActive = true;
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"), uniqueConstraints = {
             @UniqueConstraint(columnNames = { "user_id", "role_id" })

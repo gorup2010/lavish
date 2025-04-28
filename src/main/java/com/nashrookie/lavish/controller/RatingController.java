@@ -42,7 +42,6 @@ public class RatingController {
     @PostMapping()
     @Secured("USER")
     public ResponseEntity<Rating> createRating(@Valid @RequestBody CreateRatingDto rating, Authentication auth) {
-        Rating newRating = ratingService.createRating(rating, (AppUserDetails) auth.getPrincipal());
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(ratingService.createRating(rating, (AppUserDetails) auth.getPrincipal()));
     }
 }
