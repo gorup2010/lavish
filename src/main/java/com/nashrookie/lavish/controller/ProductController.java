@@ -1,6 +1,7 @@
 package com.nashrookie.lavish.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.nashrookie.lavish.dto.request.CreateProductDto;
 import com.nashrookie.lavish.dto.request.ProductFilterDto;
@@ -14,6 +15,7 @@ import com.nashrookie.lavish.dto.response.ProductInformationDto;
 import com.nashrookie.lavish.entity.Product;
 import com.nashrookie.lavish.exception.NotFoundProductException;
 import com.nashrookie.lavish.repository.ProductRepository;
+import com.nashrookie.lavish.service.CloudinaryService;
 import com.nashrookie.lavish.service.ProductService;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,9 +24,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +48,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductRepository productRepository;
+    private final CloudinaryService cloudinaryService;
 
     @GetMapping()
     public ResponseEntity<PaginationResponse<ProductCardDto>> getProductsUserView(
@@ -84,11 +90,11 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductInformationDto.class)))
     @ApiResponse(responseCode = "403", description = "Authorization failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @PostMapping
-    @Secured("ADMIN")
-    public ResponseEntity<ProductInformationDto> createProduct(@RequestBody CreateProductDto productCreation) {
-
-        return ResponseEntity.ok(null);
+    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    //@Secured("ADMIN")
+    public ResponseEntity<?> createProduct(@Valid @ModelAttribute CreateProductDto productCreation) {
+        Map<String, String> res = cloudinaryService.uploadFile(productCreation.thumbnailImg());
+        return ResponseEntity.ok(res);
     }
 
     @PatchMapping("/{id}")
