@@ -50,6 +50,12 @@ public class ApiExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex, request);
     }
 
+    @ExceptionHandler({ImageDeleteException.class, ImageUploadException.class})
+    public ResponseEntity<ErrorResponse> handleCloudinaryException(NotFoundProductException ex,
+            WebRequest request) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);

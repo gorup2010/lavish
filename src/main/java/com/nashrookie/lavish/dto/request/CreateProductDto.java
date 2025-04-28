@@ -2,9 +2,20 @@ package com.nashrookie.lavish.dto.request;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-public record CreateProductDto(String name, Long price, String description, String thumbnailImg, Boolean isFeatured,
-        Integer quantity,
-        List<Long> categorieIds, List<MultipartFile> images) {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record CreateProductDto(
+                @NotBlank @Length(min = 10, max = 200) String name,
+                @Min(0) Long price,
+                @NotBlank @Length(min = 10, max = 255) String description,
+                MultipartFile thumbnailImg,
+                @NotNull Boolean isFeatured,
+                @Min(0) Integer quantity,
+                @NotNull Integer categoryId,
+                List<MultipartFile> images) {
 }

@@ -47,7 +47,8 @@ public class WebSecurityConfig {
     private static final String[] publicEndpoints = { "/login", "/register", "/refresh", "/test",
             "/swagger-ui.html", "/swagger-ui/**", "/api-docs/**" };
 
-    private static final String[] onlyGetEndpoints = { "/api/v1/categories/**", "/api/v1/ratings/**", "/api/v1/products/**" };
+    private static final String[] onlyGetEndpoints = { "/api/v1/categories/**", "/api/v1/ratings/**",
+            "/api/v1/products/**" };
 
     private final UserDetailsService userDetailsService;
 
@@ -92,9 +93,10 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(publicEndpoints).permitAll()
-                        .requestMatchers(HttpMethod.GET, onlyGetEndpoints).permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll()) // TODO: test
+                        // .requestMatchers(publicEndpoints).permitAll()
+                        // .requestMatchers(HttpMethod.GET, onlyGetEndpoints).permitAll()
+                        // .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(logout -> logout.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
