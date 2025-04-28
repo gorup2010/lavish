@@ -53,8 +53,8 @@ public class ProductService {
 
     public Page<Product> getProducts(ProductFilterDto productFilter, Pageable pageable) {
         List<Category> categories = null;
-        if (productFilter.categorieIds() != null && !productFilter.categorieIds().isEmpty()) {
-            categories = categoryRepository.findAllById(productFilter.categorieIds());
+        if (productFilter.categoryIds() != null && !productFilter.categoryIds().isEmpty()) {
+            categories = categoryRepository.findAllById(productFilter.categoryIds());
         }
 
         return productRepository.findAll(

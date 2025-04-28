@@ -16,7 +16,7 @@ public record ProductFilterDto(
         Boolean isFeatured,
         @SortByConstraint String sortBy,
         @SortOrderConstraint String sortOrder,
-        List<Long> categorieIds) {
+        List<Long> categoryIds) {
 
     @AssertTrue(message = "minPrice must be less than maxPrice")
     public boolean isMinPriceLessThanMaxPrice() {

@@ -21,7 +21,7 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findWithRolesByUsername(username).orElseThrow(() -> {
+        User user = userRepository.findWithRolesByIsActiveTrueAndUsername(username).orElseThrow(() -> {
             log.info("Not found user {}", username);
             return new UsernameNotFoundException("User not found");
         });
