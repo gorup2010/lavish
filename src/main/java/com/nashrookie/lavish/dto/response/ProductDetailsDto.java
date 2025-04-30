@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.nashrookie.lavish.entity.Product;
 
-public record ProductInformationDto(
+public record ProductDetailsDto(
                 Long id,
                 String name,
                 Long price,
@@ -16,10 +16,10 @@ public record ProductInformationDto(
                 List<CategoryDto> categories,
                 List<ImageDto> images) {
 
-        public static ProductInformationDto fromModel(Product product) {
+        public static ProductDetailsDto fromModel(Product product) {
                 List<CategoryDto> categories = product.getCategories().stream().map(CategoryDto::fromModel).toList();
                 List<ImageDto> images = product.getImages().stream().map(ImageDto::fromModel).toList();
-                return new ProductInformationDto(product.getId(), product.getName(), product.getPrice(),
+                return new ProductDetailsDto(product.getId(), product.getName(), product.getPrice(),
                                 product.getRating(), product.getDescription(), product.getThumbnailImg(),
                                 product.getIsFeatured(), product.getQuantity(), categories, images);
         }

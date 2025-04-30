@@ -44,14 +44,14 @@ public class ApiExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, validationException, request);
     }
 
-    @ExceptionHandler(NotFoundProductException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundProductException(NotFoundProductException ex,
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex,
             WebRequest request) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex, request);
     }
 
-    @ExceptionHandler({ImageDeleteException.class, ImageUploadException.class})
-    public ResponseEntity<ErrorResponse> handleCloudinaryException(NotFoundProductException ex,
+    @ExceptionHandler({ ImageDeleteException.class, ImageUploadException.class })
+    public ResponseEntity<ErrorResponse> handleCloudinaryException(Exception ex,
             WebRequest request) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
     }
@@ -71,7 +71,7 @@ public class ApiExceptionHandler {
         String errorMessage = ex.getMessage();
 
         log.error(ERROR_LOG_FORMAT, this.getServletPath(request), status.value(), errorMessage);
-        //ex.printStackTrace();
+        // ex.printStackTrace();
 
         ErrorResponse errorResponse = new ErrorResponse(status.value(), errorMessage);
         return ResponseEntity.status(status).body(errorResponse);
