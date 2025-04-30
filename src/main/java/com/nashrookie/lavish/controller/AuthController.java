@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -17,7 +16,6 @@ import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
 import com.nashrookie.lavish.dto.response.AuthResponse;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
-import com.nashrookie.lavish.service.CloudinaryService;
 import com.nashrookie.lavish.service.JwtService;
 import com.nashrookie.lavish.service.UserService;
 
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final CloudinaryService cloudinaryService;
     private final UserService userService;
     private final JwtService jwtService;
     private static final String COOKIE_NAME = "refresh";

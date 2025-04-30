@@ -21,7 +21,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "users")
 @Data
@@ -43,14 +42,14 @@ public class User extends AuditEntity {
     @Column
     @Builder.Default
     private Boolean isActive = true;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"), uniqueConstraints = {
             @UniqueConstraint(columnNames = { "user_id", "role_id" })
     })
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Builder.Default
     private Set<Rating> ratings = new HashSet<>();
 

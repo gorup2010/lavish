@@ -10,11 +10,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = ProductSortByValidator.class)
+@Constraint(validatedBy = CategorySortByValidator.class)
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ProductSortByConstraint {
-    String message() default "Invalid sortBy field in product filter";
+public @interface CategorySortByConstraint {
+    String message() default "Invalid sortBy field in category filter. Allowed values are 'name' or 'createdOn'.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

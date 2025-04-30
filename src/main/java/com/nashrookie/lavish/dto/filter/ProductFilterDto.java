@@ -1,4 +1,4 @@
-package com.nashrookie.lavish.dto.request;
+package com.nashrookie.lavish.dto.filter;
 
 import java.util.List;
 
