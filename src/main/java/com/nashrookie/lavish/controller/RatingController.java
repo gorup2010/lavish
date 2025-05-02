@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +39,6 @@ public class RatingController {
     }
 
     @PostMapping()
-    @Secured("USER")
     public ResponseEntity<Rating> createRating(@Valid @RequestBody CreateRatingDto rating, Authentication auth) {
         return ResponseEntity.ok(ratingService.createRating(rating, (AppUserDetails) auth.getPrincipal()));
     }

@@ -75,20 +75,6 @@ public class ProductController {
         return ResponseEntity.ok(ProductDetailsDto.fromModel(res));
     }
 
-    @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductDetailsDto.class)))
-    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @GetMapping("/admin")
-    // @Secured("ADMIN")
-    public ResponseEntity<PaginationResponse<ProductCardInAdminDto>> getProductsAdminView(
-            @Valid @ModelAttribute ProductFilterDto productFilter) {
-        Pageable pageable = PaginationUtils.createPageable(productFilter.page(),
-                productFilter.size(),
-                productFilter.sortBy(),
-                productFilter.sortOrder());
-
-        PaginationResponse<ProductCardInAdminDto> result = productService.getProductsAdminView(productFilter, pageable);
-        return ResponseEntity.ok(result);
-    }
 
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductDetailsDto.class)))
     @ApiResponse(responseCode = "403", description = "Authorization failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
