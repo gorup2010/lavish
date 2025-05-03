@@ -102,13 +102,13 @@ public class ProductController {
     public ResponseEntity<String> addImage(@PathVariable Long id,
             @ModelAttribute FileImageDto fileImageDto) {
         productService.addProductImage(id, fileImageDto);
-        return ResponseEntity.ok("Update Images Successfully");
+        return ResponseEntity.ok("Add Image Successfully");
     }
 
     @DeleteMapping("/{product-id}/images/{img-id}")
     public ResponseEntity<String> deleteProductImages(@PathVariable(value = "product-id") Long productId, @PathVariable(value = "img-id") Long imgId) {
         productService.deleteProductImages(productId, imgId);
-        return ResponseEntity.ok("Delete Images Successfully");
+        return ResponseEntity.ok("Delete Image Successfully");
     }
 
     @DeleteMapping
