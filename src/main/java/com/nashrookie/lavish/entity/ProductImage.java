@@ -33,6 +33,9 @@ public class ProductImage {
     private String url;
 
     @Column(length = 50)
+    private String publicId;
+
+    @Column(length = 50)
     private String type;
 
     @ManyToOne(fetch = FetchType.LAZY)

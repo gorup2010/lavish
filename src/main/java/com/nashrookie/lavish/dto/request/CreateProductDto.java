@@ -16,6 +16,6 @@ public record CreateProductDto(
                 MultipartFile thumbnailImg,
                 @NotNull Boolean isFeatured,
                 @Min(0) Integer quantity,
-                @NotNull Integer categoryId,
+                @NotNull Long categoryId,
                 List<MultipartFile> images) {
 }

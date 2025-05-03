@@ -32,7 +32,7 @@ public class CloudinaryService {
                 "secure", true));
     }
 
-    public Map uploadFile(MultipartFile file) {
+    public Map<String, String> uploadFile(MultipartFile file) {
         try {
             return cloudinary.uploader().upload(file.getBytes(), options);
         } catch (IOException e) {
@@ -41,7 +41,7 @@ public class CloudinaryService {
         }
     }
 
-    public Map deleteFile(String publicId) {
+    public Map<String, String> deleteFile(String publicId) {
         try {
             return cloudinary.uploader().destroy(publicId, Map.of());
         } catch (IOException e) {

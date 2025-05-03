@@ -5,12 +5,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.nashrookie.lavish.dto.filter.ProductFilterDto;
 import com.nashrookie.lavish.dto.request.CreateProductDto;
+import com.nashrookie.lavish.dto.request.FileImageDto;
 import com.nashrookie.lavish.dto.request.ProductIdsDto;
-import com.nashrookie.lavish.dto.request.UpdateProductDto;
+import com.nashrookie.lavish.dto.request.UpdateProductDetailsDto;
 import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.dto.response.ProductCardDto;
-import com.nashrookie.lavish.dto.response.ProductCardInAdminDto;
 import com.nashrookie.lavish.dto.response.ProductDetailsDto;
 import com.nashrookie.lavish.entity.Product;
 import com.nashrookie.lavish.exception.ResourceNotFoundException;
@@ -26,7 +26,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -49,7 +48,6 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductRepository productRepository;
-    private final CloudinaryService cloudinaryService;
 
     @GetMapping()
     public ResponseEntity<PaginationResponse<ProductCardDto>> getProductsUserView(
@@ -75,23 +73,42 @@ public class ProductController {
         return ResponseEntity.ok(ProductDetailsDto.fromModel(res));
     }
 
-
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductDetailsDto.class)))
     @ApiResponse(responseCode = "403", description = "Authorization failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     // @Secured("ADMIN")
-    public ResponseEntity<?> createProduct(@Valid @ModelAttribute CreateProductDto productCreation) {
-        Map<String, String> res = cloudinaryService.uploadFile(productCreation.thumbnailImg());
+    public ResponseEntity<Long> createProduct(@Valid @ModelAttribute CreateProductDto productCreation) {
+        Long res = productService.createProduct(productCreation).getId();
         return ResponseEntity.ok(res);
     }
 
     @PatchMapping("/{id}")
-    @Secured("ADMIN")
-    public ResponseEntity<ProductDetailsDto> updateProduct(@PathVariable String id,
-            @RequestBody UpdateProductDto productUpdate) {
+    // @Secured("ADMIN")
+    public ResponseEntity<String> updateProductDetails(@PathVariable Long id,
+            @RequestBody UpdateProductDetailsDto updateProduct) {
+        productService.updateProductDetails(id, updateProduct);
+        return ResponseEntity.ok("Update Successfully");
+    }
 
-        return ResponseEntity.ok(null);
+    @PatchMapping(value = "/{id}/thumbnail", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<String> updateProductThumbnail(@PathVariable Long id,
+            @ModelAttribute FileImageDto fileImageDto) {
+        productService.updateProductThumbnail(id, fileImageDto);
+        return ResponseEntity.ok("Update Thumbnail Successfully");
+    }
+
+    @PostMapping(value = "/{id}/images", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<String> addImage(@PathVariable Long id,
+            @ModelAttribute FileImageDto fileImageDto) {
+        productService.addProductImage(id, fileImageDto);
+        return ResponseEntity.ok("Update Images Successfully");
+    }
+
+    @DeleteMapping("/{product-id}/images/{img-id}")
+    public ResponseEntity<String> deleteProductImages(@PathVariable(value = "product-id") Long productId, @PathVariable(value = "img-id") Long imgId) {
+        productService.deleteProductImages(productId, imgId);
+        return ResponseEntity.ok("Delete Images Successfully");
     }
 
     @DeleteMapping

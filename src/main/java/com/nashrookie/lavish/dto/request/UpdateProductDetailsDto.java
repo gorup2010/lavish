@@ -1,10 +1,11 @@
 package com.nashrookie.lavish.dto.request;
 
-public record UpdateProductDto(
+public record UpdateProductDetailsDto(
     String name,
     Long price,
     String description,
     Boolean isFeatured,
-    Integer quantity
+    Integer quantity,
+    Long categoryId
 ) {
 }

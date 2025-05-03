@@ -51,6 +51,10 @@ public class Product extends AuditEntity {
     @Column(nullable = false, length = 255)
     private String thumbnailImg;
 
+    @Column(length = 50)
+    @Builder.Default
+    private String thumbnailId = "";
+
     @Column
     @Builder.Default
     private Boolean isFeatured = false;
