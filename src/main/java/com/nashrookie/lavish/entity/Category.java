@@ -17,12 +17,12 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "categories")
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,6 +39,10 @@ public class Category extends AuditEntity {
     
     @Column(length = 255)
     private String thumbnailImg;
+
+    @Column(length = 50)
+    @Builder.Default
+    private String thumbnailId = "";
     
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JsonIgnore

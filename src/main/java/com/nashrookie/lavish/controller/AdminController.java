@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
-//@Secured("ADMIN")
+@Secured("ADMIN")
 @Slf4j
 public class AdminController {
 

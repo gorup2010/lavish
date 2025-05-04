@@ -13,7 +13,7 @@ public record CreateProductDto(
                 @NotBlank @Length(min = 10, max = 200) String name,
                 @Min(0) Long price,
                 @NotBlank @Length(min = 10, max = 255) String description,
-                MultipartFile thumbnailImg,
+                @NotNull MultipartFile thumbnailImg,
                 @NotNull Boolean isFeatured,
                 @Min(0) Integer quantity,
                 @NotNull Long categoryId,

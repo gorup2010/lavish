@@ -93,10 +93,9 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .anyRequest().permitAll()) // TODO: test
-                        // .requestMatchers(publicEndpoints).permitAll()
-                        // .requestMatchers(HttpMethod.GET, onlyGetEndpoints).permitAll()
-                        // .anyRequest().authenticated())
+                        .requestMatchers(publicEndpoints).permitAll()
+                        .requestMatchers(HttpMethod.GET, onlyGetEndpoints).permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(logout -> logout.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new RestAuthenticationEntryPoint()))

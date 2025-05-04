@@ -77,14 +77,14 @@ public class ProductController {
     @ApiResponse(responseCode = "403", description = "Authorization failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    // @Secured("ADMIN")
-    public ResponseEntity<Long> createProduct(@Valid @ModelAttribute CreateProductDto productCreation) {
-        Long res = productService.createProduct(productCreation).getId();
-        return ResponseEntity.ok(res);
+    @Secured("ADMIN")
+    public ResponseEntity<String> createProduct(@Valid @ModelAttribute CreateProductDto productCreation) {
+        productService.createProduct(productCreation).getId();
+        return ResponseEntity.ok("Create Product Successfully");
     }
 
     @PatchMapping("/{id}")
-    // @Secured("ADMIN")
+    @Secured("ADMIN")
     public ResponseEntity<String> updateProductDetails(@PathVariable Long id,
             @RequestBody UpdateProductDetailsDto updateProduct) {
         productService.updateProductDetails(id, updateProduct);
@@ -92,6 +92,7 @@ public class ProductController {
     }
 
     @PatchMapping(value = "/{id}/thumbnail", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @Secured("ADMIN")
     public ResponseEntity<String> updateProductThumbnail(@PathVariable Long id,
             @ModelAttribute FileImageDto fileImageDto) {
         productService.updateProductThumbnail(id, fileImageDto);
@@ -99,6 +100,7 @@ public class ProductController {
     }
 
     @PostMapping(value = "/{id}/images", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @Secured("ADMIN")
     public ResponseEntity<String> addImage(@PathVariable Long id,
             @ModelAttribute FileImageDto fileImageDto) {
         productService.addProductImage(id, fileImageDto);
@@ -106,6 +108,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{product-id}/images/{img-id}")
+    @Secured("ADMIN")
     public ResponseEntity<String> deleteProductImages(@PathVariable(value = "product-id") Long productId, @PathVariable(value = "img-id") Long imgId) {
         productService.deleteProductImages(productId, imgId);
         return ResponseEntity.ok("Delete Image Successfully");
