@@ -14,10 +14,12 @@ import com.nashrookie.lavish.exception.ImageUploadException;
 
 import lombok.extern.slf4j.Slf4j;
 
+// Reference: https://cloudinary.com/documentation/java_quickstart
 @Service
 @Slf4j
 public class CloudinaryService {
     private final Cloudinary cloudinary;
+    // https://cloudinary.com/documentation/image_upload_api_reference#upload_optional_parameters
     private final Map<?, ?> options = Map.of("use_filename", true,
             "folder", "lavish",
             "resource_type", "auto");
@@ -34,6 +36,9 @@ public class CloudinaryService {
 
     public Map<String, String> uploadFile(MultipartFile file) {
         try {
+            // Refer https://cloudinary.com/documentation/java_image_and_video_upload#upload_response
+            // to see the structure of the response.
+            // Remember to store public_id or asset_id in the response to delete later.
             return cloudinary.uploader().upload(file.getBytes(), options);
         } catch (IOException e) {
             log.error("Error when uploading image file");

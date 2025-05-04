@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nashrookie.lavish.dto.filter.UserFilterDto;
 import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
+import com.nashrookie.lavish.dto.request.UpdateUserIsActiveDto;
 import com.nashrookie.lavish.dto.response.AuthResponse;
 import com.nashrookie.lavish.dto.response.UserInAdminDto;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
@@ -90,12 +91,12 @@ public class UserService {
     }
 
     @Transactional
-    public void toggleInActive(Long id) {
+    public void updateUserActiveStatus(Long id, UpdateUserIsActiveDto isActiveDto) {
         User user = userRepository.findById(id).orElseThrow(() -> {
-            log.error("Not found user with id {}", id);
+            log.error("Not found user with id {} in updateUserActiveStatus", id);
             return new ResourceNotFoundException();
         });
-        user.setIsActive(!user.getIsActive());
+        user.setIsActive(isActiveDto.isActive());
         userRepository.save(user);
     }
 }
