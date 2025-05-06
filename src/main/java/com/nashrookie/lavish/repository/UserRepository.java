@@ -10,6 +10,10 @@ import com.nashrookie.lavish.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByIsActiveTrueAndUsername(String username);
+
     @EntityGraph(attributePaths = {"roles"}, type = EntityGraph.EntityGraphType.FETCH)
     Optional<User> findWithRolesByIsActiveTrueAndUsername(String username);
+    
+    @EntityGraph(attributePaths = {"roles"}, type = EntityGraph.EntityGraphType.FETCH)
+    Optional<User> findWithRolesById(Long id);
 }

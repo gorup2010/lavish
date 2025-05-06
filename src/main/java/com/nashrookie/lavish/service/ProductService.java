@@ -72,7 +72,7 @@ public class ProductService {
     @Transactional
     public Product createProduct(CreateProductDto productCreation) {
         Product product = productMapper.toProduct(productCreation);
-        
+
         Category category = categoryRepository.findById(productCreation.categoryId()).orElseThrow(() -> {
             log.error("Not found category with id {} in createProduct", productCreation.categoryId());
             throw new ResourceNotFoundException();
@@ -115,17 +115,17 @@ public class ProductService {
             log.error("In updateProductDetails, product with id {} has no category", product.getId());
             throw new RuntimeException();
         });
-        
+
         if (!category.equals(updateCategory)) {
             product.getCategories().remove(category);
             product.addCategory(updateCategory);
         }
-
+        
         productRepository.save(product);
     }
 
     @Transactional
-    public void updateProductThumbnail (Long id, FileImageDto fileImageDto) {
+    public void updateProductThumbnail(Long id, FileImageDto fileImageDto) {
         Product product = productRepository.findById(id).orElseThrow(() -> {
             log.error("Not found product with id {} in updateProductThumbnail", id);
             throw new ResourceNotFoundException();
@@ -145,7 +145,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void addProductImage (Long id, FileImageDto fileImageDto) {
+    public void addProductImage(Long id, FileImageDto fileImageDto) {
         Product product = productRepository.findById(id).orElseThrow(() -> {
             log.error("Not found product with id {} in addProductImage", id);
             throw new ResourceNotFoundException();
@@ -168,10 +168,11 @@ public class ProductService {
             log.error("Not found product with id {} in deleteProductImages", productId);
             throw new ResourceNotFoundException();
         });
-        ProductImage productImage = product.getImages().stream().filter(image -> image.getId().equals(imgId)).findFirst().orElseThrow(() -> {
-            log.error("Product with id {} has no image with id {}", productId, imgId);
-            throw new ResourceNotFoundException();
-        });
+        ProductImage productImage = product.getImages().stream().filter(image -> image.getId().equals(imgId))
+                .findFirst().orElseThrow(() -> {
+                    log.error("Product with id {} has no image with id {}", productId, imgId);
+                    throw new ResourceNotFoundException();
+                });
 
         DeletedImage deletedImage = DeletedImage.builder()
                 .url(productImage.getUrl())
