@@ -23,16 +23,20 @@ public class JwtService {
     private static final String ID = "id";
     private static final String USERNAME = "username";
     private static final String ROLES = "roles";
-    private static final Integer ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15 minutes in millis
-    private static final Integer REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24; // One day in millis
 
+    private final Integer ACCESS_TOKEN_EXPIRATION;
+    private final Integer REFRESH_TOKEN_EXPIRATION;
     private final Algorithm accessAlgorithm;
     private final Algorithm refreshAlgorithm;
 
-    public JwtService(@Value("${application.jwt.secretkey}") String accessSecret,
-            @Value("${application.jwt.refresh-secretkey}") String refreshSecret) {
+    public JwtService(@Value("${application.jwt.access-secretkey}") String accessSecret,
+            @Value("${application.jwt.refresh-secretkey}") String refreshSecret,
+            @Value("${application.jwt.access-lifetime}") Integer accessLifetime,
+            @Value("${application.jwt.refresh-lifetime}") Integer refreshLifetime) {
         this.accessAlgorithm = Algorithm.HMAC256(accessSecret);
         this.refreshAlgorithm = Algorithm.HMAC256(refreshSecret);
+        this.ACCESS_TOKEN_EXPIRATION = accessLifetime;
+        this.REFRESH_TOKEN_EXPIRATION = refreshLifetime;
     }
 
     public String generateAccessToken(Long id, String username, List<String> roles) {
@@ -43,8 +47,6 @@ public class JwtService {
                     .withClaim(ROLES, roles)
                     .withClaim(USERNAME, username)
                     .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
-                    // .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 15)) Only for
-                    // test. Last 15 seconds
                     .sign(accessAlgorithm);
         } catch (JWTCreationException exception) {
             throw new JWTCreationException("Error while generating access token", exception);
@@ -74,8 +76,6 @@ public class JwtService {
                     .withClaim(ROLES, roles)
                     .withClaim(USERNAME, username)
                     .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
-                    // .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) Only for
-                    // test. Last 2 minutes
                     .sign(refreshAlgorithm);
         } catch (JWTCreationException exception) {
             throw new JWTCreationException("Error while generating refresh token", exception);
@@ -102,5 +102,10 @@ public class JwtService {
     public Long getId(String token) {
         DecodedJWT decodedJWT = JWT.decode(token);
         return decodedJWT.getClaim(ID).asLong();
+    }
+
+    public Long getRemaingTimeToLiveInSeconds(String token) {
+        DecodedJWT decodedJWT = JWT.decode(token);
+        return (decodedJWT.getExpiresAt().getTime() - System.currentTimeMillis()) / 1000;
     }
 }

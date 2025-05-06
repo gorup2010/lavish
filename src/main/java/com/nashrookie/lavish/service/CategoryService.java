@@ -2,7 +2,6 @@ package com.nashrookie.lavish.service;
 
 import java.util.Map;
 
-import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,7 +16,6 @@ import com.nashrookie.lavish.dto.response.CategoryInAdminDto;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.entity.Category;
 import com.nashrookie.lavish.entity.DeletedImage;
-import com.nashrookie.lavish.entity.Product;
 import com.nashrookie.lavish.exception.ResourceNotFoundException;
 import com.nashrookie.lavish.repository.CategoryRepository;
 import com.nashrookie.lavish.repository.DeletedImageRepository;

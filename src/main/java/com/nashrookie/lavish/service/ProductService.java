@@ -84,14 +84,16 @@ public class ProductService {
         product.setThumbnailImg(res.get("url"));
         product.setThumbnailId(res.get("public_id"));
 
-        for (MultipartFile img : productCreation.images()) {
-            Map<String, String> resImg = cloudinaryService.uploadFile(img);
-            ProductImage productImage = ProductImage.builder()
-                    .url(resImg.get("url"))
-                    .publicId(resImg.get("public_id"))
-                    .type("image")
-                    .build();
-            product.addImage(productImage);
+        if (productCreation.images() != null) {
+            for (MultipartFile img : productCreation.images()) {
+                Map<String, String> resImg = cloudinaryService.uploadFile(img);
+                ProductImage productImage = ProductImage.builder()
+                        .url(resImg.get("url"))
+                        .publicId(resImg.get("public_id"))
+                        .type("image")
+                        .build();
+                product.addImage(productImage);
+            }
         }
 
         return productRepository.save(product);

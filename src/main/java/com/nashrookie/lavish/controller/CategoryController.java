@@ -29,8 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/categories")
@@ -64,18 +62,20 @@ public class CategoryController {
 
     @PatchMapping("/{id}")
     @Secured("ADMIN")
-    public ResponseEntity<Void> updateCategoryDetails(@PathVariable Long id, @RequestBody UpdateCategoryDetailsDto updateDto) {
+    public ResponseEntity<Void> updateCategoryDetails(@PathVariable Long id,
+            @RequestBody UpdateCategoryDetailsDto updateDto) {
         categoryService.updateCategoryDetails(id, updateDto);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id}/thumbnail")
     @Secured("ADMIN")
-    public ResponseEntity<Void> updateCategoryThumbnail(@PathVariable Long id, @ModelAttribute FileImageDto fileImageDto) {
+    public ResponseEntity<Void> updateCategoryThumbnail(@PathVariable Long id,
+            @ModelAttribute FileImageDto fileImageDto) {
         categoryService.updateCategoryThumbnail(id, fileImageDto);
         return ResponseEntity.ok().build();
     }
-    
+
     @DeleteMapping()
     @Secured("ADMIN")
     public ResponseEntity<Void> deleteCategory() {

@@ -1,7 +1,6 @@
 package com.nashrookie.lavish.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.nashrookie.lavish.dto.filter.ProductFilterDto;
 import com.nashrookie.lavish.dto.request.CreateProductDto;
@@ -15,7 +14,6 @@ import com.nashrookie.lavish.dto.response.ProductDetailsDto;
 import com.nashrookie.lavish.entity.Product;
 import com.nashrookie.lavish.exception.ResourceNotFoundException;
 import com.nashrookie.lavish.repository.ProductRepository;
-import com.nashrookie.lavish.service.CloudinaryService;
 import com.nashrookie.lavish.service.ProductService;
 import com.nashrookie.lavish.util.PaginationUtils;
 
@@ -79,7 +77,7 @@ public class ProductController {
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @Secured("ADMIN")
     public ResponseEntity<String> createProduct(@Valid @ModelAttribute CreateProductDto productCreation) {
-        productService.createProduct(productCreation).getId();
+        productService.createProduct(productCreation);
         return ResponseEntity.ok("Create Product Successfully");
     }
 
