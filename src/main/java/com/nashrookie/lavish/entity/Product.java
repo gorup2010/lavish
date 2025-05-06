@@ -1,11 +1,21 @@
 package com.nashrookie.lavish.entity;
 
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,10 +40,29 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product extends AuditEntity {
+@SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+@EntityListeners(AuditingEntityListener.class)
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreatedBy
+    @Column(name = "created_by", length = 255)
+    protected String createdBy;
+
+    @CreationTimestamp
+    @Column(name = "created_on")
+    protected ZonedDateTime createdOn;
+
+    @LastModifiedBy
+    @Column(name = "last_modified_by", length = 255)
+    protected String lastModifiedBy;
+
+    @UpdateTimestamp
+    @Column(name = "last_modified_on")
+    protected ZonedDateTime lastModifiedOn;
 
     @Column(nullable = false, length = 200)
     private String name;

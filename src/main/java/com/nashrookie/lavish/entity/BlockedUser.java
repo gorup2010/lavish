@@ -6,9 +6,9 @@ import org.springframework.data.redis.core.TimeToLive;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 
-@RedisHash(value = "tokens")
+@RedisHash(value = "blocked_users")
 @AllArgsConstructor
-public class Token {
+public class BlockedUser {
     @Id
     private String id;
 

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nashrookie.lavish.entity.Role;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
+import com.nashrookie.lavish.repository.BlockedUserRepository;
+import com.nashrookie.lavish.repository.TokenRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +27,22 @@ public class JwtService {
     private static final String USERNAME = "username";
     private static final String ROLES = "roles";
 
+    private BlockedUserRepository blockedUserRepository;
+    private TokenRepository tokenRepository;
     private final Integer ACCESS_TOKEN_EXPIRATION;
     private final Integer REFRESH_TOKEN_EXPIRATION;
     private final Algorithm accessAlgorithm;
     private final Algorithm refreshAlgorithm;
+
+    @Autowired
+    public void setBlockedUserRepository(BlockedUserRepository blockedUserRepository) {
+        this.blockedUserRepository = blockedUserRepository;
+    }
+
+    @Autowired
+    public void setTokenRepository(TokenRepository tokenRepository) {
+        this.tokenRepository = tokenRepository;
+    }
 
     public JwtService(@Value("${application.jwt.access-secretkey}") String accessSecret,
             @Value("${application.jwt.refresh-secretkey}") String refreshSecret,
@@ -59,10 +74,17 @@ public class JwtService {
 
     public String validateAccessToken(String token) {
         try {
-            return JWT.require(accessAlgorithm)
+            String username = JWT.require(accessAlgorithm)
                     .build()
                     .verify(token)
                     .getSubject();
+
+            blockedUserRepository.findById(username).ifPresent((user) -> {
+                log.error("In validateAccessToken, Access token {} already revoked", token);
+                throw new RefreshTokenInvalidException();
+            });
+
+            return username;
         } catch (JWTVerificationException exception) {
             throw new JWTVerificationException("Error while validating access token", exception);
         }
@@ -84,10 +106,21 @@ public class JwtService {
 
     public String validateRefreshToken(String token) {
         try {
-            return JWT.require(refreshAlgorithm)
+            String username = JWT.require(refreshAlgorithm)
                     .build()
                     .verify(token)
                     .getSubject();
+
+            tokenRepository.findById(token).ifPresent((t) -> {
+                log.error("In validateRefreshToken, Refresh token {} already revoked", token);
+                throw new JWTVerificationException("");
+            });
+            blockedUserRepository.findById(username).ifPresent((user) -> {
+                log.error("User {} is blocked", username);
+                throw new JWTVerificationException("");
+            });
+
+            return username;
         } catch (JWTVerificationException exception) {
             log.error("Error while validating refresh token {}", token);
             throw new RefreshTokenInvalidException();

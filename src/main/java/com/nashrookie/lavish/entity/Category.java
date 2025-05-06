@@ -2,6 +2,9 @@ package com.nashrookie.lavish.entity;
 
 import java.util.Set;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.HashSet;
@@ -26,6 +29,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE categories SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class Category extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

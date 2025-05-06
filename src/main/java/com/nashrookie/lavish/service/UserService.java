@@ -2,11 +2,13 @@ package com.nashrookie.lavish.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,12 @@ import com.nashrookie.lavish.dto.response.AuthResponse;
 import com.nashrookie.lavish.dto.response.UserInAdminDto;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.entity.AppUserDetails;
+import com.nashrookie.lavish.entity.BlockedUser;
 import com.nashrookie.lavish.entity.User;
 import com.nashrookie.lavish.entity.Role;
 import com.nashrookie.lavish.exception.ResourceNotFoundException;
 import com.nashrookie.lavish.exception.UsernameAlreadyExistsException;
+import com.nashrookie.lavish.repository.BlockedUserRepository;
 import com.nashrookie.lavish.repository.RoleRepository;
 import com.nashrookie.lavish.repository.UserRepository;
 import com.nashrookie.lavish.specification.UserSpecification;
@@ -38,10 +42,14 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class UserService {
 
+    @Value("${application.jwt.refresh-lifetime}")
+    private Long refreshLifetime;
+
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
+    private final BlockedUserRepository blockedUserRepository;
     private final JwtService jwtService;
 
     @Transactional
@@ -68,7 +76,6 @@ public class UserService {
     public AuthResponse verify(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-
         AppUserDetails user = (AppUserDetails) authentication.getPrincipal();
 
         String jwt = jwtService.generateAccessToken(user.getId(), user.getUsername(), user.getRoles());
@@ -96,6 +103,18 @@ public class UserService {
             log.error("Not found user with id {} in updateUserActiveStatus", id);
             return new ResourceNotFoundException();
         });
+
+        if (user.getRoles().stream().anyMatch(role -> role.getName().equals("ADMIN"))) {
+            throw new AuthorizationDeniedException("Cannot change admin status");
+        }
+
+        if (isActiveDto.isActive()) {
+            blockedUserRepository.deleteById(user.getUsername());
+        }
+        else {
+            blockedUserRepository.save(new BlockedUser(user.getUsername(), refreshLifetime / 1000));
+        }
+
         user.setIsActive(isActiveDto.isActive());
         userRepository.save(user);
     }

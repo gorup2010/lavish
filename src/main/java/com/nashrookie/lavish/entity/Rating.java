@@ -1,5 +1,8 @@
 package com.nashrookie.lavish.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -26,6 +29,8 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE ratings SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class Rating extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
