@@ -13,7 +13,6 @@ import com.nashrookie.lavish.dto.filter.CategoryFilterDto;
 import com.nashrookie.lavish.dto.request.CreateCategoryDto;
 import com.nashrookie.lavish.dto.request.FileImageDto;
 import com.nashrookie.lavish.dto.request.UpdateCategoryDetailsDto;
-import com.nashrookie.lavish.dto.response.CategoryDto;
 import com.nashrookie.lavish.dto.response.CategoryInAdminDto;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.entity.Category;

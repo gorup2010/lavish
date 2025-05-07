@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateCategoryDto(
-        @NotBlank @Length(min = 10, max = 200) String name,
-        @NotBlank @Length(min = 10, max = 255) String description,
+        @NotBlank @Length(min = 1, max = 200) String name,
+        @NotBlank @Length(min = 1, max = 255) String description,
         @NotNull MultipartFile thumbnailImg) {
 }

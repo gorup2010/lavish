@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nashrookie.lavish.dto.request.LoginRequest;
 import com.nashrookie.lavish.dto.request.RegisterRequest;
 import com.nashrookie.lavish.dto.response.AuthResponse;
-import com.nashrookie.lavish.entity.Token;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
-import com.nashrookie.lavish.repository.TokenRepository;
 import com.nashrookie.lavish.service.JwtService;
 import com.nashrookie.lavish.service.UserService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse auth = userService.verify(request);
         String refreshToken = jwtService.generateRefreshToken(auth.id(), auth.username(), auth.roles());
         ResponseCookie refreshPathCookie = this.createCookie(refreshToken, REFRESH_ENDPOINT, refreshTokenMaxage);
@@ -58,7 +58,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse auth = userService.register(request);
         String refreshToken = jwtService.generateRefreshToken(auth.id(), auth.username(), auth.roles());
         ResponseCookie refreshPathCookie = this.createCookie(refreshToken, REFRESH_ENDPOINT, refreshTokenMaxage);

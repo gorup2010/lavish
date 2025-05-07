@@ -10,9 +10,6 @@ import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.dto.response.ProductCardDto;
 import com.nashrookie.lavish.dto.response.ProductDetailsDto;
-import com.nashrookie.lavish.entity.Product;
-import com.nashrookie.lavish.exception.ResourceNotFoundException;
-import com.nashrookie.lavish.repository.ProductRepository;
 import com.nashrookie.lavish.service.ProductService;
 import com.nashrookie.lavish.util.PaginationUtils;
 

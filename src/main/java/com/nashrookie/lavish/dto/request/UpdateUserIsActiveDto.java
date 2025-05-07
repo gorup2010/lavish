@@ -1,5 +1,7 @@
 package com.nashrookie.lavish.dto.request;
 
-public record UpdateUserIsActiveDto(Boolean isActive) {
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateUserIsActiveDto(@NotNull Boolean isActive) {
 
 }

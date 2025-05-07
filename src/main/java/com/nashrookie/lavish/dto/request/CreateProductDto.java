@@ -10,9 +10,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateProductDto(
-                @NotBlank @Length(min = 10, max = 200) String name,
+                @NotBlank @Length(min = 1, max = 200) String name,
                 @Min(0) Long price,
-                @NotBlank @Length(min = 10, max = 255) String description,
+                @NotBlank @Length(min = 1, max = 255) String description,
                 @NotNull MultipartFile thumbnailImg,
                 @NotNull Boolean isFeatured,
                 @Min(0) Integer quantity,
