@@ -2,6 +2,7 @@ package com.nashrookie.lavish.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import com.nashrookie.lavish.repository.CategoryRepository;
 import com.nashrookie.lavish.service.CategoryService;
 import com.nashrookie.lavish.util.CategoryMapper;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,51 +37,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Slf4j
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
 
     @GetMapping()
     public ResponseEntity<List<CategoryDto>> getCategoriesUserView() {
-        return ResponseEntity.ok(categoryRepository.findAllBy(CategoryDto.class));
+        return ResponseEntity.ok(categoryService.findAll(CategoryDto.class));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<CategoryDetailsDto> getCategoryDetails(@PathVariable Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> {
-            log.error("Not found category with id {}", id);
-            throw new ResourceNotFoundException();
-        });
-        return ResponseEntity.ok(categoryMapper.toCategoryDetailsDto(category));
+        return ResponseEntity.ok(categoryMapper.toCategoryDetailsDto(categoryService.getCategory(id)));
     }
 
-    @PostMapping()
+    @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @Secured("ADMIN")
-    public ResponseEntity<String> createCategory(@ModelAttribute CreateCategoryDto createCategoryDto) {
+    public ResponseEntity<String> createCategory(@Valid @ModelAttribute CreateCategoryDto createCategoryDto) {
         categoryService.createCategory(createCategoryDto);
         return ResponseEntity.ok("Create Category Successfully");
     }
 
     @PatchMapping("/{id}")
     @Secured("ADMIN")
-    public ResponseEntity<Void> updateCategoryDetails(@PathVariable Long id,
-            @RequestBody UpdateCategoryDetailsDto updateDto) {
+    public ResponseEntity<String> updateCategoryDetails(@PathVariable Long id,
+            @Valid @RequestBody UpdateCategoryDetailsDto updateDto) {
         categoryService.updateCategoryDetails(id, updateDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Update category details successfully");
     }
 
     @PatchMapping("/{id}/thumbnail")
     @Secured("ADMIN")
-    public ResponseEntity<Void> updateCategoryThumbnail(@PathVariable Long id,
+    public ResponseEntity<String> updateCategoryThumbnail(@PathVariable Long id,
             @ModelAttribute FileImageDto fileImageDto) {
         categoryService.updateCategoryThumbnail(id, fileImageDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Update category thumbnail successfully");
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     @Secured("ADMIN")
-    public ResponseEntity<Void> deleteCategory() {
-        categoryService.deleteCategory();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Delete Category Successfully");
     }
 }

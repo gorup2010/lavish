@@ -37,7 +37,6 @@ public class AuthController {
     private Integer refreshTokenMaxage;
     private final UserService userService;
     private final JwtService jwtService;
-    private final TokenRepository tokenRepository;
 
     @Autowired
     public void setRefreshTokenMaxage(@Value("${application.jwt.refresh-lifetime}") Integer refreshTokenMaxage) {
@@ -76,10 +75,7 @@ public class AuthController {
             log.warn("Refresh token is null");
             throw new RefreshTokenInvalidException();
         }
-        if (tokenRepository.existsById(refresh)) {
-            log.error("Refresh token {} already revoked", refresh);
-            throw new RefreshTokenInvalidException();
-        }
+
         String username = jwtService.validateRefreshToken(refresh);
         List<String> roles = jwtService.getStringRoleList(refresh);
         Long id = jwtService.getId(refresh);
@@ -94,15 +90,15 @@ public class AuthController {
     public ResponseEntity<String> logout(@CookieValue(required = true) String refresh) {
         ResponseCookie refreshPathCookie = this.createCookie("", REFRESH_ENDPOINT, 0);
         ResponseCookie logoutPathCookie = this.createCookie("", LOGOUNT_ENDPOINT, 0);
-
-        tokenRepository.save(new Token(refresh, jwtService.getRemaingTimeToLiveInSeconds(refresh)));
+        jwtService.revokeToken(refresh);
+        
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshPathCookie.toString(), logoutPathCookie.toString())
                 .body("Logged out");
     }
 
     @GetMapping("/test")
-    public ResponseEntity<String> test() {
+    public ResponseEntity<String> test() {        
         return ResponseEntity.ok("TEST");
     }
 

@@ -85,6 +85,13 @@ public class UserService {
                 .roles(stringRoles).build();
     }
 
+    public User getUserDetails(Long id) {
+        return userRepository.findWithRolesById(id).orElseThrow(() -> {
+            log.error("Not found user with id {} in getUserDetails", id);
+            return new ResourceNotFoundException();
+        });
+    }
+
     public PaginationResponse<UserInAdminDto> getUsersAdminView(UserFilterDto userFilter,
             Pageable pageable) {
         Page<User> products = this.getUsers(userFilter, pageable);

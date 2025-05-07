@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nashrookie.lavish.dto.filter.ProductFilterDto;
 import com.nashrookie.lavish.dto.request.CreateProductDto;
 import com.nashrookie.lavish.dto.request.FileImageDto;
-import com.nashrookie.lavish.dto.request.ProductIdsDto;
 import com.nashrookie.lavish.dto.request.UpdateProductDetailsDto;
 import com.nashrookie.lavish.dto.response.ErrorResponse;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
@@ -23,7 +22,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -45,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductRepository productRepository;
 
     @GetMapping()
     public ResponseEntity<PaginationResponse<ProductCardDto>> getProductsUserView(
@@ -55,8 +52,7 @@ public class ProductController {
                 productFilter.sortBy(),
                 productFilter.sortOrder());
 
-        PaginationResponse<ProductCardDto> result = productService.getProductsUserView(productFilter, pageable);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(productService.getProductsUserView(productFilter, pageable));
     }
 
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductDetailsDto.class)))
@@ -64,11 +60,7 @@ public class ProductController {
     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/{id}")
     public ResponseEntity<ProductDetailsDto> getProductDetailInformation(@PathVariable Long id) {
-        Product res = productRepository.findWithImagesAndCategoriesById(id).orElseThrow(() -> {
-            log.error("Not found product with id {}", id);
-            throw new ResourceNotFoundException();
-        });
-        return ResponseEntity.ok(ProductDetailsDto.fromModel(res));
+        return ResponseEntity.ok(ProductDetailsDto.fromModel(productService.getProductDetails(id)));
     }
 
     @ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductDetailsDto.class)))
@@ -84,7 +76,7 @@ public class ProductController {
     @PatchMapping("/{id}")
     @Secured("ADMIN")
     public ResponseEntity<String> updateProductDetails(@PathVariable Long id,
-            @RequestBody UpdateProductDetailsDto updateProduct) {
+            @Valid @RequestBody UpdateProductDetailsDto updateProduct) {
         productService.updateProductDetails(id, updateProduct);
         return ResponseEntity.ok("Update Successfully");
     }
@@ -105,18 +97,18 @@ public class ProductController {
         return ResponseEntity.ok("Add Image Successfully");
     }
 
-    @DeleteMapping("/{product-id}/images/{img-id}")
+    @DeleteMapping("/{product_id}/images/{img_id}")
     @Secured("ADMIN")
-    public ResponseEntity<String> deleteProductImages(@PathVariable(value = "product-id") Long productId, @PathVariable(value = "img-id") Long imgId) {
+    public ResponseEntity<String> deleteProductImages(@PathVariable(value = "product_id") Long productId,
+            @PathVariable(value = "img_id") Long imgId) {
         productService.deleteProductImages(productId, imgId);
         return ResponseEntity.ok("Delete Image Successfully");
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Secured("ADMIN")
-    public ResponseEntity<String> deleteProducts(@RequestBody ProductIdsDto productIds) {
-        // Delete products
-
-        return ResponseEntity.ok("Delete Successfully");
+    public ResponseEntity<String> deleteProducts(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Delete Product Successfully");
     }
 }

@@ -44,6 +44,13 @@ public class ProductService {
     private final DeletedImageRepository deletedImageRepository;
     private final ProductMapper productMapper;
 
+    public Product getProductDetails(Long id) {
+        return productRepository.findWithImagesAndCategoriesById(id).orElseThrow(() -> {
+            log.error("Not found product with id {} in getProductDetails", id);
+            throw new ResourceNotFoundException();
+        });
+    }
+
     public PaginationResponse<ProductCardDto> getProductsUserView(ProductFilterDto productFilter, Pageable pageable) {
         Page<Product> products = this.getProducts(productFilter, pageable);
         return PaginationUtils.createPaginationResponse(products, ProductCardDto::fromModel);
@@ -120,7 +127,7 @@ public class ProductService {
             product.getCategories().remove(category);
             product.addCategory(updateCategory);
         }
-        
+
         productRepository.save(product);
     }
 
@@ -182,5 +189,14 @@ public class ProductService {
 
         product.removeImage(productImage);
         productRepository.save(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> {
+            log.error("Not found product with id {} in deleteProduct", id);
+            throw new ResourceNotFoundException();
+        });
+        productRepository.delete(product);
     }
 }

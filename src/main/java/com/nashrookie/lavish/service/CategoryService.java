@@ -1,5 +1,6 @@
 package com.nashrookie.lavish.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import com.nashrookie.lavish.dto.filter.CategoryFilterDto;
 import com.nashrookie.lavish.dto.request.CreateCategoryDto;
 import com.nashrookie.lavish.dto.request.FileImageDto;
 import com.nashrookie.lavish.dto.request.UpdateCategoryDetailsDto;
+import com.nashrookie.lavish.dto.response.CategoryDto;
 import com.nashrookie.lavish.dto.response.CategoryInAdminDto;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.entity.Category;
@@ -31,10 +33,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CategoryService {
 
-    private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final CategoryRepository categoryRepository;
     private final DeletedImageRepository deletedImageRepository;
     private final CloudinaryService cloudinaryService;
+
+    public <T> List<T> findAll(Class<T> type) {
+        return categoryRepository.findAllBy(type);
+    }
+
+    public Category getCategory(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> {
+            log.error("Not found category with id {}", id);
+            throw new ResourceNotFoundException();
+        });
+    }
 
     public PaginationResponse<CategoryInAdminDto> getCategoriesAdminView(CategoryFilterDto categoryFilter,
             Pageable pageable) {
@@ -95,7 +108,11 @@ public class CategoryService {
     }
 
     @Transactional
-    public void deleteCategory() {
-
+    public void deleteCategory(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> {
+            log.error("Not found category with id {} in deleteCategory", id);
+            throw new ResourceNotFoundException();
+        });
+        categoryRepository.delete(category);
     }
 }

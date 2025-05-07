@@ -14,6 +14,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nashrookie.lavish.entity.Role;
+import com.nashrookie.lavish.entity.Token;
 import com.nashrookie.lavish.exception.RefreshTokenInvalidException;
 import com.nashrookie.lavish.repository.BlockedUserRepository;
 import com.nashrookie.lavish.repository.TokenRepository;
@@ -54,6 +55,10 @@ public class JwtService {
         this.REFRESH_TOKEN_EXPIRATION = refreshLifetime;
     }
 
+    public void revokeToken(String token) {
+        tokenRepository.save(new Token(token, this.getRemaingTimeToLiveInSeconds(token)));
+    }
+
     public String generateAccessToken(Long id, String username, List<String> roles) {
         try {
             return JWT.create()
@@ -80,8 +85,8 @@ public class JwtService {
                     .getSubject();
 
             blockedUserRepository.findById(username).ifPresent((user) -> {
-                log.error("In validateAccessToken, Access token {} already revoked", token);
-                throw new RefreshTokenInvalidException();
+                log.error("In validateAccessToken, user {} is blocked", username);
+                throw new JWTVerificationException("");
             });
 
             return username;
@@ -116,7 +121,7 @@ public class JwtService {
                 throw new JWTVerificationException("");
             });
             blockedUserRepository.findById(username).ifPresent((user) -> {
-                log.error("User {} is blocked", username);
+                log.error("In validateRefreshToken, user {} is blocked", username);
                 throw new JWTVerificationException("");
             });
 
