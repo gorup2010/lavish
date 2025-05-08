@@ -118,15 +118,13 @@ public class ProductService {
             log.error("Not found category with id {} in updateProductDetails", updateProduct.categoryId());
             throw new ResourceNotFoundException();
         });
-        Category category = product.getCategories().stream().findFirst().orElseThrow(() -> {
-            log.error("In updateProductDetails, product with id {} has no category", product.getId());
-            throw new RuntimeException();
-        });
+        
+        Category category = product.getCategories().stream().findFirst().orElse(null);
 
-        if (!category.equals(updateCategory)) {
+        if (category != null && !category.equals(updateCategory)) {
             product.getCategories().remove(category);
-            product.addCategory(updateCategory);
         }
+        product.addCategory(updateCategory);
 
         productRepository.save(product);
     }

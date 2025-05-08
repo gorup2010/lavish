@@ -5,8 +5,6 @@ import java.util.Set;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.HashSet;
 
 import jakarta.persistence.CascadeType;
@@ -50,7 +48,6 @@ public class Category extends AuditEntity {
     private String thumbnailId = "";
     
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JsonIgnore
     @Builder.Default
     private Set<Product> productCategories = new HashSet<>();
 

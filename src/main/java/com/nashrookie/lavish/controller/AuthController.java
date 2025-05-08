@@ -51,7 +51,8 @@ public class AuthController {
         String refreshToken = jwtService.generateRefreshToken(auth.id(), auth.username(), auth.roles());
         ResponseCookie refreshPathCookie = this.createCookie(refreshToken, REFRESH_ENDPOINT, refreshTokenMaxage);
         ResponseCookie logoutPathCookie = this.createCookie(refreshToken, LOGOUNT_ENDPOINT, refreshTokenMaxage);
-
+        log.info("Refresh token: {}", refreshToken);
+        log.info("Access token: {}", auth.accessToken());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshPathCookie.toString(), logoutPathCookie.toString())
                 .body(auth);

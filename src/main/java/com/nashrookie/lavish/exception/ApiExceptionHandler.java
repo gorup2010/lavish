@@ -3,6 +3,7 @@ package com.nashrookie.lavish.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +55,12 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCloudinaryException(Exception ex,
             WebRequest request) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex, request);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(Exception ex,
+            WebRequest request) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex, request);
     }
 
     @ExceptionHandler(Exception.class)

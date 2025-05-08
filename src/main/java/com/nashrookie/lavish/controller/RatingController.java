@@ -7,7 +7,6 @@ import com.nashrookie.lavish.dto.request.CreateRatingDto;
 import com.nashrookie.lavish.dto.response.PaginationResponse;
 import com.nashrookie.lavish.dto.response.RatingDto;
 import com.nashrookie.lavish.entity.AppUserDetails;
-import com.nashrookie.lavish.entity.Rating;
 import com.nashrookie.lavish.service.RatingService;
 
 import jakarta.validation.Valid;
@@ -39,7 +38,8 @@ public class RatingController {
     }
 
     @PostMapping()
-    public ResponseEntity<Rating> createRating(@Valid @RequestBody CreateRatingDto rating, Authentication auth) {
-        return ResponseEntity.ok(ratingService.createRating(rating, (AppUserDetails) auth.getPrincipal()));
+    public ResponseEntity<String> createRating(@Valid @RequestBody CreateRatingDto rating, Authentication auth) {
+        ratingService.createRating(rating, (AppUserDetails) auth.getPrincipal());
+        return ResponseEntity.ok("Create rating successfully");
     }
 }

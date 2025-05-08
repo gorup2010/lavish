@@ -1,12 +1,14 @@
 package com.nashrookie.lavish.dto.request;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 
 public record RegisterRequest(
     @Email String email,
-    @Size(min = 8) String password,
-    @Size(min = 100) String firstname,
-    @Size(min = 100) String lastname
+    @NotBlank @Length(min = 8) String password,
+    @NotBlank @Length(min = 1, max = 100) String firstname,
+    @NotBlank @Length(min = 1, max = 100) String lastname
 ) {
 }
