@@ -2,16 +2,7 @@ package com.nashrookie.lavish.dto.response;
 
 import java.time.ZonedDateTime;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-
-@Data
-@AllArgsConstructor
-class OwnerDto {
-    private Long id;
-    private String firstname;
-    private String lastname;
-}
 
 @Data
 public class RatingDto {

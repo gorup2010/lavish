@@ -18,9 +18,6 @@ import com.nashrookie.lavish.dto.request.FileImageDto;
 import com.nashrookie.lavish.dto.request.UpdateCategoryDetailsDto;
 import com.nashrookie.lavish.dto.response.CategoryDetailsDto;
 import com.nashrookie.lavish.dto.response.CategoryDto;
-import com.nashrookie.lavish.entity.Category;
-import com.nashrookie.lavish.exception.ResourceNotFoundException;
-import com.nashrookie.lavish.repository.CategoryRepository;
 import com.nashrookie.lavish.service.CategoryService;
 import com.nashrookie.lavish.util.CategoryMapper;
 
